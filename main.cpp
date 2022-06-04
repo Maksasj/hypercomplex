@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 #include "hypercomplex.hpp"
 
 template<typename T> void printH(T a1, T a2) {
@@ -14,6 +13,7 @@ int main() {
       quaternion q1 = {3, 1, 4, 6};
       quaternion q2 = {5, -3, -4, 3};
       printH(q1, q2);
+      printH(q2, q1);
 
       octonion o1 = {7, 3, 5, -6, 8, 2, 9, 1};
       octonion o2 = {1, -6, 4, 3, 8, 8, 9, 9};

@@ -1,6 +1,7 @@
 #ifndef HYPERCOMPLEX_H
 #define HYPERCOMPLEX_H
 
+#include <vector>
 #include <string>
 #include <iostream>
 #include <cmath>

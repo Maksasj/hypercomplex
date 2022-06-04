@@ -4,9 +4,8 @@ Simmple single-header library written in C++, intended for simple way to interac
 In mathematics, hypercomplex number is a traditional term for an element of a finite-dimensional unital algebra over the field of real numbers.
 
 ### Provides simple way to interact with:
-- Matrix type
-- Matrix algebra
-- Simple way to save & load matrix from files.
+- Hypercomplex number multiplication and arithmetic
+- ∞ dimension numbers
 
 ### **Complex**
 In mathematics, a complex number is an element of a number system that contains the real numbers and a specific element denoted i, called the imaginary unit, and satisfying the equation i^2 = −1. Moreover, every complex number can be expressed in the form a + bi, where a and b are real numbers. Because no real number satisfies the above equation, i was called an imaginary number by René Descartes. For the complex number a + bi, a is called the real part and b is called the imaginary part. The set of complex numbers is denoted by either of the symbols **C** or C. Despite the historical nomenclature "imaginary", complex numbers are regarded in the mathematical sciences as just as "real" as the real numbers and are fundamental in many aspects of the scientific description of the natural world. [Wikipedia](https://en.wikipedia.org/wiki/Complex_number)

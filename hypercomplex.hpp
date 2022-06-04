@@ -6,16 +6,143 @@
 #include <cmath>
 #include <utility>
 
-template<typename T> T conj(T x) {
-      T xstar = x*(-1.0);
-      xstar.a *= -1;
-      return xstar;
-}
-
 template<class T1, class T2> struct Cpair {
       T1 a1;
       T2 a2;
 };
+
+
+/*
+
+
+def conj(x):
+      xstar = -x
+      xstar[0] *= -1
+      return xstar 
+
+def CayleyDickson(x, y):
+      n = len(x)
+
+      if n == 1:
+            return x*y
+
+      m = n // 2
+
+      a, b = x[:m], x[m:]
+      c, d = y[:m], y[m:]
+      z = np.zeros(n)
+      z[:m] = CayleyDickson(a, c) - CayleyDickson(conj(d), b)
+      z[m:] = CayleyDickson(d, a) + CayleyDickson(b, conj(c))
+      return z
+
+*/
+
+namespace hypercomplex {
+      enum Dim {
+            COMPLEX = 2,
+      };
+
+      
+      struct base {
+            int d;
+            std::vector<float> e;
+            base(std::vector<float> other) {
+                  e = other;
+                  d = other.size();
+            };
+
+            base self() { return base(e); }
+
+            Cpair<base, base> split(base q) {
+                  int m = q.e.size() / 2; 
+
+                  base a = base({});
+                  base b = base({});
+                  for(int l = 0; l < q.e.size(); l++) {
+                        if (l < m) {
+                              a.e.push_back(q.e[l]);
+                        } else {
+                              b.e.push_back(q.e[l]);
+                        }
+                  }
+                  a.d = a.e.size();
+                  b.d = b.e.size();
+                  return {a, b};
+            }
+
+            base conj(base other) {
+                  base xstar = base({});
+                  for(auto a : other.e) {
+                        xstar.e.push_back(a*-1.0);
+                  }
+                  xstar.e[0] *= -1;
+                  xstar.d = xstar.e.size();
+                  return xstar;
+            }
+
+            base operator+(base const& other) {
+                  std::vector<float> E;
+                  for(int x = 0; x < e.size(); x++) {
+                        E.push_back(e[x] + other.e[x]);
+                  }
+                  return base(E);
+            }
+            base operator-(base const& other) {
+                  std::vector<float> E;
+                  for(int x = 0; x < e.size(); x++) {
+                        E.push_back(e[x] - other.e[x]);
+                  }
+                  return base(E);
+            }
+            
+            std::vector<float> conj(std::vector<float> other) {
+                  std::vector<float> xstar;
+                  for(auto a : other) {
+                        xstar.push_back(a*-1.0);
+                  }
+                  xstar[0] *= -1;
+                  return xstar;
+            }
+
+            base operator*(base y) {
+                  if(e.size() == 1) {
+                        return base({e[0]*y.e[0]});
+                  }
+
+                  Cpair<base, base> p1 = split(self());
+                  Cpair<base, base> p2 = split(y);
+
+                  
+                  std::vector<float> qp1_vec = (p1.a1*p2.a1 - conj(p2.a2)*p1.a2).e;
+                  std::vector<float> qp2_vec = (p2.a2*p1.a1 + p1.a2*conj(p2.a1)).e;
+
+
+                  base qp1 = base(qp1_vec);
+                  base qp2 = base(qp2_vec);
+
+                  base q = base({});
+                  q.d = e.size()*2;
+
+                  for(auto qp : qp1.e) {
+                        q.e.push_back(qp);
+                  }
+                  
+                  for(auto qp : qp2.e) {
+                        q.e.push_back(qp);
+                  }
+
+                  return q;
+            }
+      };
+}
+
+/*
+struct complex: hypercomplex::base {
+      complex(float _a, float _i): hypercomplex::base({_a, _i}, 2) {
+
+      };
+};
+
 
 struct imaginary {
       float a;
@@ -31,6 +158,7 @@ struct imaginary {
       }
 };
 
+/*
 struct complex {
       float a;
       imaginary i;
@@ -78,7 +206,7 @@ struct quaternion: complex {
             return q;
       }
 
-      /*
+      
       quaternion operator*(quaternion const& other) { 
             return {
                   (a*other.a - i.a*other.i.a - j.a*other.j.a - k.a*other.k.a),
@@ -87,7 +215,7 @@ struct quaternion: complex {
                   (a*other.k.a + i.a*other.j.a - j.a*other.i.a + k.a*other.a)
             };
       }
-      */
+      
 
       friend std::ostream& operator<<(std::ostream& os, quaternion other) {
             os    << other.a 
@@ -141,5 +269,5 @@ struct octonion: quaternion {
             return os;
       }
 };
-
+*/
 #endif

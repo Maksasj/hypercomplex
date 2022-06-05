@@ -47,14 +47,24 @@ namespace hypercomplex {
                   }
             public:
                   std::vector<float> e;
-
-                  base(std::vector<float> other) {
-                        assert(valid_dim(other.size()));
-                        e = other;
+                  
+                  base(int dim) {
+                        assert(!valid_dim(dim));
+                        for(int x = 0; x < dim; x++) {
+                              e.push_back(0);
+                        }
+                  }
+                  base(std::vector<float> data) {
+                        assert(valid_dim(data.size()));
+                        e = data;
+                  };
+                  base(std::vector<float> data, int dim) {
+                        assert(valid_dim(data.size()) && dim == data.size());
+                        e = data;
                   };
 
                   base operator+(base const& other) {
-                        assert(e.size() != other.e.size());
+                        assert(e.size() == other.e.size());
                         std::vector<float> E;
                         for(int x = 0; x < e.size(); x++) {
                               E.push_back(e[x] + other.e[x]);
@@ -62,7 +72,7 @@ namespace hypercomplex {
                         return base(E);
                   }
                   base operator-(base const& other) {
-                        assert(e.size() != other.e.size());
+                        assert(e.size() == other.e.size());
                         std::vector<float> E;
                         for(int x = 0; x < e.size(); x++) {
                               E.push_back(e[x] - other.e[x]);
@@ -70,20 +80,20 @@ namespace hypercomplex {
                         return base(E);
                   }  
                   void operator+=(base const& other) {
-                        assert(e.size() != other.e.size());
+                        assert(e.size() == other.e.size());
                         for(int x = 0; x < e.size(); x++)
                               e[x] += other.e[x];
                   }
                   void operator-=(base const& other) {
-                        assert(e.size() != other.e.size());
+                        assert(e.size() == other.e.size());
                         for(int x = 0; x < e.size(); x++)
                               e[x] -= other.e[x];
                   }
                      
                   base operator*(base y) {
-                        assert(e.size() != y.e.size());
+                        assert(e.size() == y.e.size());
                         if(e.size() == 1)
-                              return base({e[0]*y.e[0]});
+                              return base(std::vector<float>({e[0]*y.e[0]}));
 
                         Cpair<base, base> p1 = split(self());
                         Cpair<base, base> p2 = split(y);
@@ -112,21 +122,24 @@ namespace hypercomplex {
 }
 
 struct complex: hypercomplex::base {
-      complex(): hypercomplex::base({0, 0}) { };
+      complex(): hypercomplex::base(2) { };
+      complex(std::vector<float> data): hypercomplex::base(data, 2) { };
       complex(float _a, float _i): hypercomplex::base({_a, _i}) { };
 
       complex(const hypercomplex::base &x) : hypercomplex::base(x) {}
 };
 
 struct quaternion: hypercomplex::base {
-      quaternion(): hypercomplex::base({0, 0, 0, 0}) { };
+      quaternion(): hypercomplex::base(4) { };
+      quaternion(std::vector<float> data): hypercomplex::base(data, 4) { };
       quaternion(float _a, float _i, float _j, float _k): hypercomplex::base({_a, _i, _j, _k}) { };
 
       quaternion(const hypercomplex::base &x) : hypercomplex::base(x) {}
 };
 
 struct octonion: hypercomplex::base {
-      octonion(): hypercomplex::base({0, 0, 0, 0, 0, 0, 0, 0}) { };
+      octonion(): hypercomplex::base(8) { };
+      octonion(std::vector<float> data): hypercomplex::base(data, 8) { };
       octonion(float _a, float _i, float _j, float _k, float _e5, float _e6, float _e7, float _e8): hypercomplex::base({_a, _i, _j, _k, _e5, _e6, _e7, _e8}) { };
 
       octonion(const hypercomplex::base &x) : hypercomplex::base(x) {}

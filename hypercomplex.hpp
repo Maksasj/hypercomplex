@@ -1,13 +1,18 @@
 #ifndef HYPERCOMPLEX_H
 #define HYPERCOMPLEX_H
 
+#include <iostream>
+#include <utility>
 #include <vector>
 #include <string>
-#include <iostream>
+#include <cassert>
 #include <cmath>
-#include <utility>
 
 namespace hypercomplex {
+      bool valid_dim(int n) {
+            return n > 0 && 0 == (1 << 30) % n;
+      }
+
       template<class T1, class T2> struct Cpair {
             T1 a1;
             T2 a2;
@@ -44,29 +49,39 @@ namespace hypercomplex {
                   std::vector<float> e;
 
                   base(std::vector<float> other) {
+                        assert(valid_dim(other.size()));
                         e = other;
                   };
 
                   base operator+(base const& other) {
+                        assert(e.size() != other.e.size());
                         std::vector<float> E;
                         for(int x = 0; x < e.size(); x++) {
                               E.push_back(e[x] + other.e[x]);
                         }
                         return base(E);
                   }
-                  void operator+=(base const& other) {
-                        for(int x = 0; x < e.size(); x++) {
-                              e[x] += other.e[x];
-                        }
-                  }
                   base operator-(base const& other) {
+                        assert(e.size() != other.e.size());
                         std::vector<float> E;
                         for(int x = 0; x < e.size(); x++) {
                               E.push_back(e[x] - other.e[x]);
                         }
                         return base(E);
-                  }     
+                  }  
+                  void operator+=(base const& other) {
+                        assert(e.size() != other.e.size());
+                        for(int x = 0; x < e.size(); x++)
+                              e[x] += other.e[x];
+                  }
+                  void operator-=(base const& other) {
+                        assert(e.size() != other.e.size());
+                        for(int x = 0; x < e.size(); x++)
+                              e[x] -= other.e[x];
+                  }
+                     
                   base operator*(base y) {
+                        assert(e.size() != y.e.size());
                         if(e.size() == 1)
                               return base({e[0]*y.e[0]});
 

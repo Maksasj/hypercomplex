@@ -119,6 +119,108 @@ namespace hypercomplex {
                         return os;
                   }
       };
+
+      class bibase {
+            private:
+                  bibase self() { return bibase(e); }
+
+                  Cpair<bibase, bibase> split(bibase q) {
+                        int m = q.e.size() / 2; 
+
+                        bibase a = bibase({});
+                        bibase b = bibase({});
+                        for(int l = 0; l < q.e.size(); l++) {
+                              if (l < m) {
+                                    a.e.push_back(q.e[l]);
+                              } else {
+                                    b.e.push_back(q.e[l]);
+                              }
+                        }
+                        return {a, b};
+                  }
+
+                  bibase conj(bibase other) {
+                        bibase xstar = bibase({});
+                        for(auto a : other.e) {
+                              xstar.e.push_back(a*-1.0);
+                        }
+                        xstar.e[0] *= -1;
+                        return xstar;
+                  }
+            public:
+                  std::vector<float> e;
+                  
+                  bibase(int dim) {
+                        assert(!valid_dim(dim));
+                        for(int x = 0; x < dim; x++) {
+                              e.push_back(0);
+                        }
+                  }
+                  bibase(std::vector<float> data) {
+                        assert(valid_dim(data.size()));
+                        e = data;
+                  };
+                  bibase(std::vector<float> data, int dim) {
+                        assert(valid_dim(data.size()) && dim == data.size());
+                        e = data;
+                  };
+
+                  bibase operator+(bibase const& other) {
+                        assert(e.size() == other.e.size());
+                        std::vector<float> E;
+                        for(int x = 0; x < e.size(); x++) {
+                              E.push_back(e[x] + other.e[x]);
+                        }
+                        return bibase(E);
+                  }
+                  bibase operator-(bibase const& other) {
+                        assert(e.size() == other.e.size());
+                        std::vector<float> E;
+                        for(int x = 0; x < e.size(); x++) {
+                              E.push_back(e[x] - other.e[x]);
+                        }
+                        return bibase(E);
+                  }  
+                  void operator+=(bibase const& other) {
+                        assert(e.size() == other.e.size());
+                        for(int x = 0; x < e.size(); x++)
+                              e[x] += other.e[x];
+                  }
+                  void operator-=(bibase const& other) {
+                        assert(e.size() == other.e.size());
+                        for(int x = 0; x < e.size(); x++)
+                              e[x] -= other.e[x];
+                  }
+                     
+                  bibase operator*(bibase y) {
+                        assert(e.size() == y.e.size());
+                        if(e.size() == 1)
+                              return bibase(std::vector<float>({e[0]*y.e[0]}));
+
+                        Cpair<bibase, bibase> p1 = split(self());
+                        Cpair<bibase, bibase> p2 = split(y);
+
+                        bibase qp1 = bibase((p1.a1*p2.a1 - conj(p2.a2)*p1.a2).e);
+                        bibase qp2 = bibase((p2.a2*p1.a1 + p1.a2*conj(p2.a1)).e);
+
+                        bibase q = bibase({});
+
+                        for(auto qp : qp1.e)
+                              q.e.push_back(qp);
+                        
+                        for(auto qp : qp2.e)
+                              q.e.push_back(qp);
+
+                        return q;
+                  }
+
+                  friend std::ostream& operator<<(std::ostream& os, bibase other) {
+                        for(int x = 0; x < other.e.size(); x++){
+                              os << (other.e[x] > 0 ? '+' : '-') << fabs(other.e[x]) << "e" << x+1;
+                        }
+                        return os;
+                  }
+      };
 }
 
 struct complex: hypercomplex::base {

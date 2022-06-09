@@ -79,6 +79,7 @@ namespace hypercomplex {
                         }
                         return base(E);
                   }  
+                  
                   void operator+=(base const& other) {
                         assert(e.size() == other.e.size());
                         for(int x = 0; x < e.size(); x++)
@@ -89,7 +90,11 @@ namespace hypercomplex {
                         for(int x = 0; x < e.size(); x++)
                               e[x] -= other.e[x];
                   }
-                     
+                  void operator*=(base y) {
+                        base tmp = self() * y;
+                        e = tmp.e;
+                  }
+
                   base operator*(base y) {
                         assert(e.size() == y.e.size());
                         if(e.size() == 1)
@@ -110,6 +115,14 @@ namespace hypercomplex {
                               q.e.push_back(qp);
 
                         return q;
+                  }
+                  
+                  void pow(int n) {
+                        base tmp = self();
+                        for(int x = 0; x < n; x++) {
+                              tmp *= self();
+                        }
+                        e = tmp.e;
                   }
 
                   friend std::ostream& operator<<(std::ostream& os, base other) {

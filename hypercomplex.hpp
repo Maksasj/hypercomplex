@@ -260,4 +260,14 @@ struct octonion: hypercomplex::base {
       octonion(const hypercomplex::base &x) : hypercomplex::base(x) {}
 };
 
+struct sedenion: hypercomplex::base {
+      sedenion(): hypercomplex::base(16) { };
+      sedenion(std::vector<float> data): hypercomplex::base(data, 16) { };
+      sedenion(   float _a, float _i, float _j, float _k, float _e5, float _e6, float _e7, float _e8,
+                  float _e9, float _e10, float _e11, float _e12, float _e13, float _e14, float _e15, float _e16
+      ): hypercomplex::base({_a, _i, _j, _k, _e5, _e6, _e7, _e8, _e9, _e10, _e11, _e12, _e13, _e14, _e15, _e16}) { };
+
+      sedenion(const hypercomplex::base &x) : hypercomplex::base(x) {}
+};
+
 #endif
